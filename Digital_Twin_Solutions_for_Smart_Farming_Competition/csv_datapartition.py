@@ -14,7 +14,7 @@ date_list = []  #用於儲存所有日期
 train_data = [] #用於儲存訓練資料
 val_data = []   #用於儲存驗證資料
 
-i = 0
+#隨機選擇驗證日期
 for time in df['d.log_time']:
     date = time.split()[0]  #以空白字元切割
     date_list.append(date)
@@ -32,10 +32,6 @@ with tqdm(total=len(df)) as pbar:
         else:
             train_data.append(df.loc[index])
 
-        # i += 1
-        # if i == 500:
-        #     break
-        
         # 更新進度條
         pbar.update(1)
         pbar.set_description('generate_dataset')
