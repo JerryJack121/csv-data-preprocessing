@@ -16,7 +16,7 @@ val_data = []   #用於儲存驗證資料
 
 i = 0
 for time in df['d.log_time']:
-    date = time.split(' ')[0]
+    date = time.split()[0]  #以空白字元切割
     date_list.append(date)
 date_set = set(date_list)
 val_date = random.choices(tuple(date_set), k=10)
