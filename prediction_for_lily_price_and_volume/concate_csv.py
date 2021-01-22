@@ -3,10 +3,11 @@ import pandas as pd
 import os
 
 sets = ['train_x', 'train_y', 'val_x', 'val_y']
+file_name = ['FS443.csv', 'FS479.csv', 'FS592.csv', 'FS609.csv', 'FS639.csv', 'FS779.csv', 'FS859.csv', 'FS879.csv', 'FS899.csv', 'FS929.csv']
 year = '108'
 for set in sets:
     file_path = os.path.join(r'D:\dataset\lilium_price', set, year)
-    file_name = os.listdir(file_path)
+    # file_name = os.listdir(file_path)
 
     df1 = pd.read_csv(os.path.join(file_path, file_name[0]))
     df2 = pd.read_csv(os.path.join(file_path, file_name[1]))

@@ -1,4 +1,4 @@
-#用於香水百合價量預測比賽之資料預處理。
+#用於香水百合價量預測比賽之資料預處理，填補空值。
 import pandas as pd
 import os
 from tqdm import tqdm
@@ -16,7 +16,7 @@ def fill_df(df, add_date_list, sum_highest_price, sum_price_high, sum_price_mid,
     avg_sum_volume = int(sum_volume / id)
 
     for add_date in add_date_list:  #在dataframe最後面補齊缺失的日期
-        df.loc[id] = [add_date, '105 台北花市', 'FS443 香水百合 馬可波羅粉三朵', avg_highest_price, avg_price_high, avg_price_mid, avg_price_low, ang_price_avg, avg_sum_volume]
+        df.loc[id] = [add_date, '105 台北花市', '花名', avg_highest_price, avg_price_high, avg_price_mid, avg_price_low, ang_price_avg, avg_sum_volume]
         id += 1
     df = df.sort_values(by=['日　　期'])    #再對日期欄做排序
 
