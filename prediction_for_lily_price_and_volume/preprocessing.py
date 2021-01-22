@@ -22,9 +22,12 @@ def fill_df(df, add_date_list, sum_highest_price, sum_price_high, sum_price_mid,
 
     return df
 
-org_fold = r'D:\dataset\lilium_price\org\109' #原始資料
-fold = r'D:\dataset\lilium_price\109' #生成資料
+org_fold = r'D:\dataset\lilium_price\org' #原始資料
+fold = r'D:\dataset\lilium_price' #生成資料
+year = '109'
 
+org_fold = os.path.join(org_fold, year)
+fold = os.path.join(fold, year)
 csv_list = os.listdir(org_fold)
 for file_name in csv_list:
     org_path = os.path.join(org_fold, file_name)
@@ -69,4 +72,4 @@ for file_name in csv_list:
             pbar.set_description('preprocessing')
 
     df = fill_df(df, lost_date_list, sum_highest_price, sum_price_high, sum_price_mid, sum_price_low, sum_price_avg, sum_volume)
-    df.to_csv(os.path.join(fold, file_name), encoding='utf_8_sig', index=False)
+    df.to_csv(os.path.join(fold, file_name[:-4]+'.csv'), encoding='utf_8_sig', index=False)
