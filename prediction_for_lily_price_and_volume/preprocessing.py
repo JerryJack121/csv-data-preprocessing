@@ -32,14 +32,8 @@ for file_name in csv_list:
     org_path = os.path.join(org_fold, file_name)
     df = pd.read_excel(org_path, header=4)
     i = 0
-    predate, prehp, premp, preavg, pre_vol = int(105)*366+31, 0, 0, 0, 0
+    predate, prehp, premp, preavg, pre_vol = datetime.datetime(2015, 12,31), 0, 0, 0, 0
     lost_list = []
-    # sum_highest_price = 0
-    # sum_price_high = 0
-    # sum_price_mid = 0
-    # sum_price_low = 0
-    # sum_price_avg = 0
-    # sum_volume = 0
 
     with tqdm(total=len(df)-1) as pbar:
         df = df.drop(['市　　場', '產　　品', '最高價', '下價', '增減%', '增減%.1', '殘貨量', 'Unnamed: 12'], axis=1) #刪除特定欄位
@@ -48,19 +42,15 @@ for file_name in csv_list:
             date, price_high, price_mid, price_avg, volume= data_row    #日期、上價、中價、平均價、交易量        
             if date == '小　　計':
                 break
-            #各欄加總
-            # sum_price_high += price_high
-            # sum_price_mid += price_mid
-            # sum_price_avg += price_avg
-            # sum_volume += volume
-            year =  int(date.split('/')[0])
+            year = int(date.split('/')[0]) + 1911
             month = int(date.split('/')[1])
             day = int(date.split('/')[2])
-            date = year*366 + month*31 + day
-            df.loc[index, '日　　期'] = date    #日期欄位改寫為 (年*366 + 月*31 + 日)
-            if not date - predate == 1: #前後兩個日期不相臨
-                for i in range( date - predate - 1):    #找出中間所有缺少的日期
-                    lost_date = predate + i + 1
+            date = datetime.datetime(year, month, day)
+            df.loc[index, '日　　期'] = pd.to_datetime('%d/%d/%d'%(date.year, date.month, date.day))
+            interval = (date - predate).days
+            if not interval == 1: #前後兩個日期不相臨
+                for i in range(interval-1):    #找出中間所有缺少的日期
+                    lost_date = predate + datetime.timedelta(days = (i + 1))
                     lost_list.append([lost_date, (prehp+price_high)/2, (premp+price_mid)/2, (preavg+price_avg)/2, (pre_vol+volume)/2])
             predate  = date
             prehp = price_high
@@ -74,5 +64,5 @@ for file_name in csv_list:
             pbar.update(1)
             pbar.set_description(file_name)
 
-    # df = fill_df(df, lost_list)
+    df = fill_df(df, lost_list)
     df.to_csv(os.path.join(fold, file_name[:-4]+'.csv'), encoding='utf_8_sig', index=False)
