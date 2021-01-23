@@ -3,6 +3,7 @@ import pandas as pd
 import os
 from tqdm import tqdm
 import numpy as np
+import datetime
 
 #填補空缺日期
 def fill_df(df, lost_list):
@@ -22,7 +23,7 @@ def fill_df(df, lost_list):
 
 org_fold = r'D:\dataset\lilium_price\org' #原始資料
 fold = r'D:\dataset\lilium_price' #生成資料
-year = '108'
+year = '105-108'
 
 org_fold = os.path.join(org_fold, year)
 fold = os.path.join(fold, year)
@@ -31,7 +32,7 @@ for file_name in csv_list:
     org_path = os.path.join(org_fold, file_name)
     df = pd.read_excel(org_path, header=4)
     i = 0
-    predate = 0
+    predate, prehp, premp, preavg, pre_vol = int(105)*366+31, 0, 0, 0, 0
     lost_list = []
     # sum_highest_price = 0
     # sum_price_high = 0
@@ -40,7 +41,7 @@ for file_name in csv_list:
     # sum_price_avg = 0
     # sum_volume = 0
 
-    with tqdm(total=len(df)) as pbar:
+    with tqdm(total=len(df)-1) as pbar:
         df = df.drop(['市　　場', '產　　品', '最高價', '下價', '增減%', '增減%.1', '殘貨量', 'Unnamed: 12'], axis=1) #刪除特定欄位
         for index, row in df.iterrows():
             data_row = df.loc[index].values
@@ -52,11 +53,11 @@ for file_name in csv_list:
             # sum_price_mid += price_mid
             # sum_price_avg += price_avg
             # sum_volume += volume
-
-            month = date.split('/')[1]
-            day = date.split('/')[2]
-            date = (int(month)-1)*31 + int(day)
-            df.loc[index, '日　　期'] = date    #日期欄位改寫為 (月*31 + 日)
+            year =  int(date.split('/')[0])
+            month = int(date.split('/')[1])
+            day = int(date.split('/')[2])
+            date = year*366 + month*31 + day
+            df.loc[index, '日　　期'] = date    #日期欄位改寫為 (年*366 + 月*31 + 日)
             if not date - predate == 1: #前後兩個日期不相臨
                 for i in range( date - predate - 1):    #找出中間所有缺少的日期
                     lost_date = predate + i + 1
@@ -73,5 +74,5 @@ for file_name in csv_list:
             pbar.update(1)
             pbar.set_description(file_name)
 
-    df = fill_df(df, lost_list)
+    # df = fill_df(df, lost_list)
     df.to_csv(os.path.join(fold, file_name[:-4]+'.csv'), encoding='utf_8_sig', index=False)

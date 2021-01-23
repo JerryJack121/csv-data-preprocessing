@@ -8,10 +8,10 @@ from tqdm import tqdm
 import os
 
 fold = r'D:\dataset\lilium_price'
-year = '108'
+year = '105-108'
 cloumn = [ '上價', '中價', '平均價', '交易量']
 n = 10  # 取前n天的資料作為特徵
-train_end = 200
+train_end = 1040
 
 csv_fold = os.path.join(fold, year)
 file_list = os.listdir(csv_fold)
