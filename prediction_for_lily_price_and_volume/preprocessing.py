@@ -6,16 +6,16 @@ import numpy as np
 import datetime
 
 #填補空缺日期
-def fill_df(df, lost_list):
+def fill_df(df, lost_list, sum_price_high, sum_price_mid, sum_price_avg, sum_volume):
     id = len(df) - 1    #原始資料最後一列為'小計'，實際長度為len(df) - 1
     #取個欄平均
-    # avg_price_high = int(sum_price_high / id)
-    # avg_price_mid = int(sum_price_mid / id)
-    # ang_price_avg = round((sum_price_avg / id), 2)  # 四捨五入制小數點後2位
-    # avg_sum_volume = int(sum_volume / id)
+    avg_price_high = int(sum_price_high / id)
+    avg_price_mid = int(sum_price_mid / id)
+    ang_price_avg = round((sum_price_avg / id), 2)  # 四捨五入制小數點後2位
+    avg_sum_volume = int(sum_volume / id)
 
     for add_data in lost_list:  #在dataframe最後面補齊缺失的日期
-        df.loc[id] = add_data
+        df.loc[id] = [add_data, avg_price_high, avg_price_mid, ang_price_avg, avg_sum_volume]
         id += 1
     df = df.sort_values(by=['日　　期'])    #再對日期欄做排序
 
@@ -34,7 +34,7 @@ for file_name in csv_list:
     i = 0
     predate, prehp, premp, preavg, pre_vol = datetime.datetime(2015, 12,31), 0, 0, 0, 0
     lost_list = []
-
+    sum_price_high, sum_price_mid, sum_price_avg, sum_volume =0, 0, 0, 0
     with tqdm(total=len(df)-1) as pbar:
         df = df.drop(['市　　場', '產　　品', '最高價', '下價', '增減%', '增減%.1', '殘貨量', 'Unnamed: 12'], axis=1) #刪除特定欄位
         for index, row in df.iterrows():
@@ -42,6 +42,10 @@ for file_name in csv_list:
             date, price_high, price_mid, price_avg, volume= data_row    #日期、上價、中價、平均價、交易量        
             if date == '小　　計':
                 break
+            sum_price_high += price_high
+            sum_price_mid += price_mid
+            sum_price_avg +=price_avg
+            sum_volume += volume
             year = int(date.split('/')[0]) + 1911
             month = int(date.split('/')[1])
             day = int(date.split('/')[2])
@@ -51,7 +55,8 @@ for file_name in csv_list:
             if not interval == 1: #前後兩個日期不相臨
                 for i in range(interval-1):    #找出中間所有缺少的日期
                     lost_date = predate + datetime.timedelta(days = (i + 1))
-                    lost_list.append([lost_date, (prehp+price_high)/2, (premp+price_mid)/2, (preavg+price_avg)/2, (pre_vol+volume)/2])
+                    # lost_list.append([lost_date, (prehp+price_high)/2, (premp+price_mid)/2, (preavg+price_avg)/2, (pre_vol+volume)/2])
+                    lost_list.append(lost_date)
             predate  = date
             prehp = price_high
             premp = price_mid
@@ -64,5 +69,5 @@ for file_name in csv_list:
             pbar.update(1)
             pbar.set_description(file_name)
 
-    df = fill_df(df, lost_list)
+    df = fill_df(df, lost_list, sum_price_high, sum_price_mid, sum_price_avg, sum_volume)
     df.to_csv(os.path.join(fold, file_name[:-4]+'.csv'), encoding='utf_8_sig', index=False)
