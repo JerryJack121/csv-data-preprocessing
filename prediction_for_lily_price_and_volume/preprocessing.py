@@ -23,7 +23,7 @@ def fill_df(df, lost_list, sum_price_high, sum_price_mid, sum_price_avg, sum_vol
 
 org_fold = r'D:\dataset\lilium_price\org' #原始資料
 fold = r'D:\dataset\lilium_price\generate_dataset' #生成資料
-year = '105-108_all'
+year = '100-108_all'
 file_name ='FS443.xls'
 org_fold = os.path.join(org_fold, year)
 org_path = os.path.join(org_fold, file_name)
