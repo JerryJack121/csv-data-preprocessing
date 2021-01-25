@@ -8,14 +8,15 @@ from tqdm import tqdm
 import os
 
 fold = r'D:\dataset\lilium_price\generate_dataset'
-file_name = 'FS443.csv'
+file_name = 'FS929.csv'
 cloumn = [ '上價', '中價', '平均價', '交易量']
 n = 10  # 取前n天的資料作為特徵
-train_end = int(3287*0.9)
+train_val_rate = 0.9
 
 path_csv = os.path.join(fold, file_name)
+df = pd.read_csv(path_csv)
 #切分訓練集、驗證集
-train_df, val_df = utils.read_col_data(path_csv, cloumn, n , train_end=train_end)
+train_df, val_df = utils.read_col_data(path_csv, cloumn, n , train_end=int(len(df)*train_val_rate))
 #切分特徵、label
 train_x, train_y = utils.split_xy(train_df, len(cloumn), n)
 val_x, val_y = utils.split_xy(val_df, len(cloumn), n)
