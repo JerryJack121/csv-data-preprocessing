@@ -6,7 +6,6 @@ import numpy as np
 input_fold = r'D:\dataset\lilium_price\org\for2021test'
 outfold = r'D:\dataset\lilium_price\test_x\for2021test'
 n = 10
-p = 4
 
 list = os.listdir(input_fold)
 for file_name in list:
