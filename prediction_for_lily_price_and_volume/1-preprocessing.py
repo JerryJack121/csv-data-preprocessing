@@ -19,7 +19,7 @@ import datetime
 #         id += 1
 #     df = df.sort_values(by=['日　　期'])    #再對日期欄做排序
 
-    return df
+    # return df
 
 def fill_df2(new_df, next_date):    #取前10天的資料平均，填入陣列
     if len(new_df) >= 5:
@@ -102,4 +102,4 @@ for file_name in csv_list:
     
     # df = fill_df(df, lost_list, sum_price_high, sum_price_mid, sum_price_avg, sum_volume)
     new_df.insert(0, '日期', idx)
-    new_df.to_csv(os.path.join(fold, file_name[:-4]+'.csv'), encoding='utf_8_sig', index=None,header = ['日期', '最高價', '上價', '中價', '下價', '平均價', '交易量'])
+    new_df.to_csv(os.path.join(fold, file_name[:-4]+'.csv'), encoding='utf_8_sig', header = ['日期', '最高價', '上價', '中價', '下價', '平均價', '交易量'])
