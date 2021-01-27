@@ -3,12 +3,12 @@ import os
 from tqdm import tqdm
 import numpy as np
 
-input_fold = r'D:\dataset\lilium_price\org\for2020test'
-outfold = r'D:\dataset\lilium_price\test_x\for2020test'
+input_fold = r'D:\dataset\lilium_price\org\for2021test'
+outfold = r'D:\dataset\lilium_price\test_x\for2021test'
 n = 10
-p = 4
 
 list = os.listdir(input_fold)
+new_df = []
 for file_name in list:
     df = pd.read_excel(os.path.join(input_fold, file_name), header=4)
     df = df.drop(['日　　期', '市　　場', '產　　品', '增減%', '增減%.1', '殘貨量', 'Unnamed: 12'], axis=1) #刪除特定欄位
@@ -22,9 +22,10 @@ for file_name in list:
 
 
     arr_list = [arr1, arr2, arr3, arr4, arr5, arr6]
-    new_df = []
+    
     for arr in arr_list:
         for i in range(n):
             new_df.append(arr[i])
-    new_df = pd.DataFrame(np.array(new_df).reshape(1, -1))
-    new_df.to_csv(os.path.join(outfold, file_name[:-4]+'.csv'), index=None, header=None)
+        
+new_df = pd.DataFrame(np.array(new_df).reshape(1, -1))
+new_df.to_csv(os.path.join(outfold, 'for2021test.csv'), index=None, header=None)
