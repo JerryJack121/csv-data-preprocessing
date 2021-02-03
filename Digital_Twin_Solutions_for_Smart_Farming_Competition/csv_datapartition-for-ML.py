@@ -1,3 +1,4 @@
+# 用於智慧農業分身創新中的機器學習的資料切割
 import pandas as pd
 from pandas import DataFrame
 from tqdm import tqdm
