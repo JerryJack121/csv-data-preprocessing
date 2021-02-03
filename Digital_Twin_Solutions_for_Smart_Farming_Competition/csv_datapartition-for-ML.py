@@ -1,4 +1,4 @@
-# 用於智慧農業分身創新中的機器學習的資料切割
+# 機器學習的資料切割-從原始資料集當中隨機切分特定日期作為訊練集與驗證集。
 import pandas as pd
 from pandas import DataFrame
 from tqdm import tqdm
