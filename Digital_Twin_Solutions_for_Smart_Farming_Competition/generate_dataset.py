@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import numpy as np
 from tqdm import tqdm
+from sklearn.preprocessing import StandardScaler
 
 PATH_org = r'D:\dataset\2021智慧農業數位分身創新應用競賽\org'
 PATH_all = r'D:\dataset\2021智慧農業數位分身創新應用競賽\org\train-test.csv'
@@ -23,25 +24,36 @@ all_df = pd.concat([train_df, test_df], axis=0, ignore_index=True)
 # 對時間排列
 all_df['d.log_time'] = pd.to_datetime(all_df['d.log_time'])
 all_df.sort_values('d.log_time', inplace=True)
-# all_df.to_csv(PATH_all, index=None)
-# print(all_df.iloc[1248])
+all_df.to_csv(PATH_all, index=None)
+
+#正規化
+data = all_df.iloc[:, 1:data_num]
+x_scaler = StandardScaler().fit(data)
+data = x_scaler.transform(data)
+all_df.iloc[:, 1:data_num] = data
+
 # 前10個時間點(包含當下)當做訓練資料，若遇到nan則跳過
-n = 10
+n = 5
 train_data = []
 train_label = []
+test_data = []
 for i in tqdm(range(len(all_df)-n)):
-    # print(all_df.iloc[i+n][0], all_df.iloc[i+n]['actuator01'])
-    if np.isnan(all_df.iloc[i+n]['actuator01']):
-        continue    
-    data = all_df.iloc[i:i+n, 0:data_num].values
-    label = all_df.iloc[i+n, data_num:].values
-    train_data.append(data)
-    train_label.append(label)
+    if np.isnan(all_df.iloc[i+n-1]['actuator01']):  # 測試集
+        data = all_df.iloc[i:i+n, 1:data_num].values    # 第一行是時間
+        test_data.append(data)
+    else:   # 訓練驗證集
+        data = all_df.iloc[i:i+n, 1:data_num].values    # 第一行是時間
+        label = all_df.iloc[i+n-1, data_num:].values
+        train_data.append(data)
+        train_label.append(label)
 train_data = np.array(train_data)
 train_label = np.array(train_label)
+test_data = np.array(test_data)
 print('train_data:', train_data.shape)
 print('train_label:', train_label.shape)
+print('test_data:', test_data.shape)
 
-# 存檔.npy
+# # 存檔.npy
 np.save(os.path.join(PATH_generate, 'train-val_data.npy'), train_data)
 np.save(os.path.join(PATH_generate, 'train-val_label.npy'), train_label)
+np.save(os.path.join(PATH_generate, 'test_data.npy'), test_data)
